@@ -1,0 +1,11 @@
+{
+    "450993013": {
+        "nickname": "anufether",
+        "image": "plugins/signIn-plugin/resource/imageBackground/wallhaven-3l6g83.png",
+        "createdTime": "2023-08-16",
+        "updatedTime": "2023-08-16T06:03:23.948Z",
+        "signInCount": "1",
+        "consecutiveSignInCount": "1",
+        "dayArr": ["1","2"]
+    }
+}

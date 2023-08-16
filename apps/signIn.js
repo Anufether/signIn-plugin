@@ -14,8 +14,8 @@ export class signIn extends plugin {
       priority: 5000,
       rule: [
         {
-          reg: '^#?signIn$',
-          fnc: 'signIn'
+          reg: '^#?签到$',
+          fnc: '签到'
         }
       ]
     })

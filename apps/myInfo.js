@@ -10,8 +10,8 @@ export class myInfo extends plugin {
       priority: 5000,
       rule: [
         {
-          reg: '^#?myInfo$',
-          fnc: 'myInfo'
+          reg: '^#?我的信息$',
+          fnc: '我的信息'
         }
       ]
     })

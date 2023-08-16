@@ -26,9 +26,9 @@ export class myInfo extends plugin {
       const userJson = JSON.parse(userData.toString())
 
       const nickname = userJson[userId].nickname
-      const lastSignInDate = userJson[userId].lastSignInDate
-      const consecutiveSignInDays = userJson[userId].consecutiveSignInDays
-      const totalSignInDays = userJson[userId].totalSignInDays
+      const lastSignInDate = userJson[userId].updatedTime
+      const consecutiveSignInDays = userJson[userId].consecutiveSignInCount
+      const totalSignInDays = userJson[userId].signInCount
       const infoUser = [
                 `昵称：${nickname}\n`,
                 `连续签到：${consecutiveSignInDays}天\n`,

@@ -8,8 +8,8 @@ import generateImage from './imgGeneration.cjs'
 export class signIn extends plugin {
   constructor () {
     super({
-      name: 'signIn',
-      dsc: 'signIn',
+      name: '签到',
+      dsc: '签到',
       event: 'message',
       priority: 5000,
       rule: [
@@ -21,7 +21,7 @@ export class signIn extends plugin {
     })
   }
 
-  async signIn (e) {
+  async 签到 (e) {
     const userId = e.user_id
     const fileName = `plugins/signIn-plugin/data/signIn/${userId}.json`
 
@@ -50,7 +50,7 @@ export class signIn extends plugin {
 
     // 判断是否连续签到
     let isContinuous = false
-    if (data[userId] && data[userId].updatedTime === getYesterdayDate()) {
+    if (data[userId] && convertTimeToDateString(data[userId].updatedTime) === getYesterdayDate()) {
       isContinuous = true
     }
 

@@ -68,6 +68,9 @@ export class signIn extends plugin {
 
     // 创建时间是否存在
     let isCreatedTime = false
+    if (data[userId] && data[userId].createdTime === true){
+      data[userId].createdTime = null
+    }
     if (data[userId] && data[userId].createdTime != null) {
       isCreatedTime = true
     }
@@ -75,7 +78,7 @@ export class signIn extends plugin {
     // 更新签到数据
     data[userId] = {
       nickname: e.sender.nickname,
-      createdTime: isCreatedTime || getCurrentFormattedTime(),
+      createdTime: isCreatedTime ? data[userId].createdTime : getCurrentFormattedTime(),
       updatedTime: getCurrentFormattedTime(),
       signInCount: signInCount + 1,
       consecutiveSignInCount: isContinuous ? (consecutiveSignInCount + 1) : 1,

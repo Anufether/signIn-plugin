@@ -56,7 +56,7 @@ export class signIn extends plugin {
 
     // 判断数组是否存在且与当前月份相同
     let isExist = false
-    if (data[userId] && data[userId].dayArr != null && extractMonthFromDate(data[userId].updatedTime) === extractMonthFromDate(getCurrentFormattedTime())) {
+    if (data[userId] && data[userId].dayArr != null && extractMonthFromDate(data[userId].updatedTime) === extractMonthFromDate(getBeijingFormattedTime())) {
       // 将 dayArr 转换为数组（如果尚未是数组）
       if (!Array.isArray(data[userId].dayArr)) {
         data[userId].dayArr = [data[userId].dayArr]
@@ -78,8 +78,8 @@ export class signIn extends plugin {
     // 更新签到数据
     data[userId] = {
       nickname: e.sender.nickname,
-      createdTime: isCreatedTime ? data[userId].createdTime : getCurrentFormattedTime(),
-      updatedTime: getCurrentFormattedTime(),
+      createdTime: isCreatedTime ? data[userId].createdTime : getBeijingFormattedTime(),
+      updatedTime: getBeijingFormattedTime(),
       signInCount: signInCount + 1,
       consecutiveSignInCount: isContinuous ? (consecutiveSignInCount + 1) : 1,
       dayArr: isExist ? data[userId].dayArr : [extractDayFromDate(getCurrentDate())]
@@ -103,7 +103,7 @@ export class signIn extends plugin {
         success: signInCount + 1,
         continus: isContinuous ? (consecutiveSignInCount + 1) : 1,
         num: 1,
-        last_time: isUpdate ? (Date.now() - data[userId].updatedTime) : (Date.now() - getCurrentFormattedTime())
+        last_time: isUpdate ? (Date.now() - data[userId].updatedTime) : (Date.now() - getBeijingFormattedTime())
       })
 
       // 生成图片路径

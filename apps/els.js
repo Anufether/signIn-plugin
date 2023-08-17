@@ -1,6 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import moment from 'moment-timezone'
-import {Cfg as redis} from "../components/index.js";
+import { Cfg as redis } from '../components/index.js'
 
 // 设置时区为 Asia/Shanghai（北京时间）
 moment.tz.setDefault('Asia/Shanghai')

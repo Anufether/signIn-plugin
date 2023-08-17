@@ -47,7 +47,7 @@ export class RussiaRoundPlatePlugin extends plugin {
 
     // 检查当前时间是否在时间范围内
     if (!currentTime.isBetween(startTime, endTime)) {
-      return e.reply('当前俄罗斯轮盘未开放，请在14:00~17:00时间段准时到来哦~')
+      return e.reply('当前时间段俄罗斯轮盘未开放，请在14:00~17:00时间段准时到来哦~')
     }
 
     let groupId = e.group_id

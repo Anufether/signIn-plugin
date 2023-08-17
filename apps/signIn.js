@@ -15,13 +15,13 @@ export class signIn extends plugin {
       rule: [
         {
           reg: '^#?签到$',
-          fnc: '签到'
+          fnc: 'signIn'
         }
       ]
     })
   }
 
-  async 签到 (e) {
+  async signIn (e) {
     const userId = e.user_id
     const fileName = `plugins/signIn-plugin/data/signIn/${userId}.json`
 
@@ -68,7 +68,7 @@ export class signIn extends plugin {
 
     // 创建时间是否存在
     let isCreatedTime = false
-    if (data[userId] && data[userId].createdTime === true){
+    if (data[userId] && data[userId].createdTime === true) {
       data[userId].createdTime = null
     }
     if (data[userId] && data[userId].createdTime != null) {
@@ -169,19 +169,19 @@ function convertTimeToDateString (timeString) {
 }
 
 // 获取当前精确时间
-function getBeijingFormattedTime() {
-  const now = new Date();
-  now.setHours(now.getHours());
+function getBeijingFormattedTime () {
+  const now = new Date()
+  now.setHours(now.getHours())
 
-  const year = now.getFullYear();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  const hours = now.getHours().toString().padStart(2, '0');
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const seconds = now.getSeconds().toString().padStart(2, '0');
-  const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+  const year = now.getFullYear()
+  const month = (now.getMonth() + 1).toString().padStart(2, '0')
+  const day = now.getDate().toString().padStart(2, '0')
+  const hours = now.getHours().toString().padStart(2, '0')
+  const minutes = now.getMinutes().toString().padStart(2, '0')
+  const seconds = now.getSeconds().toString().padStart(2, '0')
+  const milliseconds = now.getMilliseconds().toString().padStart(3, '0')
 
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`
 }
 
 // 获取昨天的日期（YYYY-MM-DD）

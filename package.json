@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "canvas": "^2.11.2",
+    "moment-timezone": "^0.5.43",
     "oicq": "^2.3.1"
   }
 }

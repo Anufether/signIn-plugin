@@ -19,7 +19,8 @@ export class groupFriendTheoryPlugin extends plugin {
     }
 
     async start (e){
-        return  e.reply(segment.image(getRandomImageFilePath()))
+        await e.reply(segment.image(await getRandomImageFilePath()))
+        return true
     }
 }
 

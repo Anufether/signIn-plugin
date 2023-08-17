@@ -171,7 +171,7 @@ function convertTimeToDateString (timeString) {
 // 获取当前精确时间
 function getBeijingFormattedTime() {
   const now = new Date();
-  now.setHours(now.getHours() + 8); // 增加8小时以获得北京时间
+  now.setHours(now.getHours());
 
   const year = now.getFullYear();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');

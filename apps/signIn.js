@@ -103,7 +103,7 @@ export class signIn extends plugin {
         success: signInCount + 1,
         continus: isContinuous ? (consecutiveSignInCount + 1) : 1,
         num: 1,
-        last_time: isUpdate ? (Date.now() - data[userId].updatedTime) : (Date.now() - getBeijingFormattedTime())
+        last_time: isUpdate ? data[userId].updatedTime : getBeijingFormattedTime()
       })
 
       // 生成图片路径

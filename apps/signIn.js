@@ -181,7 +181,7 @@ function getBeijingFormattedTime() {
   const seconds = now.getSeconds().toString().padStart(2, '0');
   const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
 
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}+08:00`;
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
 // 获取昨天的日期（YYYY-MM-DD）

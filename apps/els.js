@@ -1,5 +1,9 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import moment from 'moment-timezone'
+import {Cfg as redis} from "../components/index.js";
+
+// 设置时区为 Asia/Shanghai（北京时间）
+moment.tz.setDefault('Asia/Shanghai')
 
 export class RussiaRoundPlatePlugin extends plugin {
   constructor () {
@@ -33,8 +37,6 @@ export class RussiaRoundPlatePlugin extends plugin {
       await e.reply('当前不在群聊里')
       return false
     }
-    // 设置时区为 Asia/Shanghai（北京时间）
-    moment.tz.setDefault('Asia/Shanghai')
 
     // 获取当前时间
     const currentTime = moment()
@@ -45,15 +47,14 @@ export class RussiaRoundPlatePlugin extends plugin {
 
     // 检查当前时间是否在时间范围内
     if (!currentTime.isBetween(startTime, endTime)) {
-      e.reply('当前俄罗斯轮盘未开放，要在14:00~17:00时间段准时到来哦~')
-      return false
+      return e.reply('当前俄罗斯轮盘未开放，请在14:00~17:00时间段准时到来哦~')
     }
 
     let groupId = e.group_id
     let groupLock = await redis.get(`HANHAN:ELS:${groupId}`)
     if (!groupLock) {
       let bulletNum = Math.floor(Math.random() * 5) + 5
-      await redis.set(`HANHAN:ELS:${groupId}`, bulletNum + '', { EX: 10 * 60 * 1000 })
+      await redis.get(`HANHAN:ELS:${groupId}`, bulletNum + '', { EX: 10 * 60 * 1000 })
       await e.reply(`当前群俄罗斯轮盘已开启！\n弹夹有【${bulletNum}】发子弹。\n请发送#开枪 参与游戏`)
     } else {
       await e.reply('当前群俄罗斯轮盘正在进行中！\n请发送#开枪 参与游戏')
@@ -65,6 +66,20 @@ export class RussiaRoundPlatePlugin extends plugin {
       await e.reply('当前不在群聊里')
       return false
     }
+
+    // 获取当前时间
+    const currentTime = moment()
+
+    // 设置上午10点和下午5点作为时间范围
+    const startTime = moment().set({ hour: 14, minute: 0, second: 0 })
+    const endTime = moment().set({ hour: 17, minute: 0, second: 0 })
+
+    // 检查当前时间是否在时间范围内
+    if (!currentTime.isBetween(startTime, endTime)) {
+      e.reply('当前俄罗斯轮盘未开放，请在14:00~17:00时间段准时到来哦~')
+      return false
+    }
+
     let groupId = e.group_id
     let leftBullets = await redis.get(`HANHAN:ELS:${groupId}`)
     if (!leftBullets) {

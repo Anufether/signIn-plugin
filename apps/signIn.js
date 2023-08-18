@@ -80,6 +80,16 @@ export class signIn extends plugin {
     if (data[userId] && data[userId].updatedTime != null) {
       isUpdate = true
     }
+    
+    // 更新签到数据
+    data[userId] = {
+      nickname: e.sender.nickname,
+      createdTime: isCreatedTime ? data[userId].createdTime : getBeijingFormattedTime(),
+      updatedTime: getBeijingFormattedTime(),
+      signInCount: signInCount + 1,
+      consecutiveSignInCount: isContinuous ? (consecutiveSignInCount + 1) : 1,
+      dayArr: isExist ? data[userId].dayArr : [extractDayFromDate(getCurrentDate())]
+    }
 
     try {
       // 构建、输出签到图片
@@ -109,15 +119,7 @@ export class signIn extends plugin {
         console.log('Image created successfully.')
         e.reply(segment.image(outputPath))
       })
-      // 更新签到数据
-      data[userId] = {
-        nickname: e.sender.nickname,
-        createdTime: isCreatedTime ? data[userId].createdTime : getBeijingFormattedTime(),
-        updatedTime: getBeijingFormattedTime(),
-        signInCount: signInCount + 1,
-        consecutiveSignInCount: isContinuous ? (consecutiveSignInCount + 1) : 1,
-        dayArr: isExist ? data[userId].dayArr : [extractDayFromDate(getCurrentDate())]
-      }
+
       // 写入签到数据
       fs.writeFileSync(fileName, JSON.stringify(data, null, 4))
     } catch (error) {

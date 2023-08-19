@@ -77,10 +77,12 @@ export class signIn extends plugin {
 
     // 更新时间是否存在
     let isUpdate = false
+    let tempTime
     if (data[userId] && data[userId].updatedTime != null) {
+      tempTime = data[userId].updatedTime
       isUpdate = true
     }
-    
+
     // 更新签到数据
     data[userId] = {
       nickname: e.sender.nickname,
@@ -103,7 +105,7 @@ export class signIn extends plugin {
         success: signInCount + 1,
         continus: isContinuous ? (consecutiveSignInCount + 1) : 1,
         num: 1,
-        last_time: isUpdate ? data[userId].updatedTime : getBeijingFormattedTime()
+        last_time: isUpdate ? tempTime : getBeijingFormattedTime()
       })
 
       // 生成图片路径

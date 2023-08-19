@@ -105,7 +105,7 @@ export class signIn extends plugin {
         success: signInCount + 1,
         continus: isContinuous ? (consecutiveSignInCount + 1) : 1,
         num: 1,
-        last_time: isUpdate ? tempTime : getBeijingFormattedTime()
+        last_time: isUpdate ? parseDateTime(tempTime) : parseDateTime(getBeijingFormattedTime)
       })
 
       // 生成图片路径
@@ -196,4 +196,9 @@ function getYesterdayDate () {
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
+}
+
+function parseDateTime (dateTime) {
+  const parsedDate = new Date(dateTime)
+  return parsedDate.getTime()
 }

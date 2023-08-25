@@ -11,6 +11,10 @@ export class state extends plugin {
         {
           reg: '^#?更新日志$',
           fnc: 'log'
+        },
+        {
+          reg: '^#?召唤$',
+          fnc: 'call'
         }
       ]
     })
@@ -18,5 +22,9 @@ export class state extends plugin {
 
   async log (e) {
     e.reply('小柴郡的使用详情请访问官网：http://anufether.top/posts/bot')
+  }
+
+  async call (e)  {
+    e.reply('喵呜~主人，我在这里哦( •̀ ω •́ )✧')
   }
 }

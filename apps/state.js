@@ -25,6 +25,8 @@ export class state extends plugin {
   }
 
   async call (e)  {
-    e.reply('喵呜~主人，我在这里哦( •̀ ω •́ )✧')
+    if (e.user_id === 450993013){
+      e.reply('喵呜~主人，我在这里哦( •̀ ω •́ )✧')
+    }
   }
 }

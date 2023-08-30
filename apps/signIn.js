@@ -2,7 +2,6 @@ import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs'
 import path from 'path'
 import { segment } from 'icqq'
-import { fileURLToPath } from 'url'
 import generateImage from './imgGeneration.cjs'
 
 export class signIn extends plugin {
@@ -19,9 +18,20 @@ export class signIn extends plugin {
         }
       ]
     })
+
+    // 创建一个锁对象
+    this.lock = false
   }
 
   async signIn (e) {
+    // 检查是否已经被锁定
+    if (this.lock) {
+      return
+    }
+
+    // 锁定事件处理
+    this.lock = true
+
     const userId = e.user_id
     const fileName = `plugins/signIn-plugin/data/signIn/${userId}.json`
 
@@ -108,23 +118,27 @@ export class signIn extends plugin {
         last_time: isUpdate ? parseDateTime(tempTime) : parseDateTime(getBeijingFormattedTime)
       })
 
-      // 生成图片路径
-      const moduleURL = new URL(import.meta.url)
-      const modulePath = fileURLToPath(moduleURL)
-      const outputPath = path.join(path.dirname(modulePath), '..', 'data', 'signImg', 'output.png')
-      const out = fs.createWriteStream(outputPath)
+      const chunks = []
       const stream = canvas.createPNGStream()
 
-      // 输出图片
-      stream.pipe(out)
-      out.on('finish', () => {
-        console.log('Image created successfully.')
-        e.reply(segment.image(outputPath))
+      stream.on('data', (chunk) => {
+        chunks.push(chunk)
+      })
+
+      stream.on('end', () => {
+        const imageBuffer = Buffer.concat(chunks)
+        const base64Image = imageBuffer.toString('base64')
+        const imageSegment = segment.image('base64://' + base64Image)
+        e.reply(imageSegment)
       })
 
       // 写入签到数据
       fs.writeFileSync(fileName, JSON.stringify(data, null, 4))
+      // 解锁事件处理
+      this.lock = false
     } catch (error) {
+      // 在异常情况下也需要解锁
+      this.lock = false
       console.error('签到失败:', error)
       e.reply('签到失败，请联系管理员')
     }

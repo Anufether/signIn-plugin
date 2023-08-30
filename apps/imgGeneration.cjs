@@ -1,4 +1,5 @@
 const {createCanvas,loadImage,registerFont} = require('canvas')
+
 registerFont('plugins/signIn-plugin/resource/fond/w05.ttf', { family: 're'})
 module.exports=async (res)=>{
   const canvas = createCanvas()

@@ -83,7 +83,7 @@ async function calendar (ctx,x,y,day_arr,color) {
   for(let i=start;i<getMonthDay(year,month)+start;i++){
     ctx.fillText(formatNum(i+1-start), x+i%7*50, parseInt(i/7)*50+y+50)
     if(day_arr.includes(formatNum(i+1-start)))
-      ctx.drawImage(circle,x+i%7*50-15, parseInt(i/7)*50+y+5,65,65);
+      ctx.drawImage(circle,x+i%7*50-5, parseInt(i/7)*50+y+20,40,40);
   }
 
 }

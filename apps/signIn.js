@@ -29,6 +29,11 @@ export class signIn extends plugin {
       return
     }
 
+    // 判断是否在群中
+    if (!e.isGroup) {
+      return e.reply('❎ 签到失败，签到功能仅在群聊中可用哦(*/ω＼*)')
+    }
+
     // 锁定事件处理
     this.lock = true
 
@@ -51,7 +56,7 @@ export class signIn extends plugin {
 
     // 检查是否已经签到过
     if (data[userId] && convertTimeToDateString(data[userId].updatedTime) === getCurrentDate()) {
-      return e.reply('今天已经签过到啦，明天再来吧~')
+      return e.reply('今天已经签过到啦，明天再来吧(*^▽^*)~')
     }
 
     // 获取连续签到数和累计签到数
@@ -134,13 +139,14 @@ export class signIn extends plugin {
 
       // 写入签到数据
       fs.writeFileSync(fileName, JSON.stringify(data, null, 4))
+
       // 解锁事件处理
       this.lock = false
     } catch (error) {
       // 在异常情况下也需要解锁
       this.lock = false
       console.error('签到失败:', error)
-      e.reply('签到失败，请联系管理员')
+      e.reply('签到失败(ToT)/~~~，请联系管理员或重新签到')
     }
   }
 }

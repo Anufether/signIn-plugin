@@ -1,4 +1,5 @@
 import plugin from '../../../lib/plugins/plugin.js'
+import { segment } from 'icqq'
 
 export class amuse extends plugin {
   constructor () {
@@ -19,6 +20,10 @@ export class amuse extends plugin {
         {
           reg: '^喵+$',
           fnc: 'miao'
+        },
+        {
+          reg: '^随机柴郡',
+          fnc: 'cj'
         }
       ]
     })
@@ -55,6 +60,22 @@ export class amuse extends plugin {
         console.error('对象没有text属性或text属性不是字符串类型')
       }
     }
+  }
+
+  // 随机柴郡图
+  async cj (e) {
+    let urls = ['http://api.yujn.cn/api/chaijun.php?', 'http://chaijun.avocado.wiki']
+    const randomIndex = Math.random()
+    let url
+    console.log('randomIndex: ' + randomIndex)
+    if (randomIndex < 0.7) {
+      url = urls[1] // 返回第一个 URL，概率为 0.7
+    } else {
+      url = urls[0] // 返回第二个 URL，概率为 0.3
+    }
+    // 发送消息
+    await this.reply(segment.image(url))
+    return true // 返回true 阻挡消息不再往下
   }
 }
 

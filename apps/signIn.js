@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { segment } from 'icqq'
 import generateImage from './imgGeneration.cjs'
+import moment from 'moment'
 
 export class signIn extends plugin {
   constructor () {
@@ -108,6 +109,8 @@ export class signIn extends plugin {
       dayArr: isExist ? data[userId].dayArr : [extractDayFromDate(getCurrentDate())]
     }
 
+    let dayKey = `YZ:signIn:count:group:${e.group_id}:${e.user_id}:day:${moment().subtract(1, 'days').format('MMDD')}`
+
     try {
       // 构建、输出签到图片
       const randomImagePath = await getRandomImageFilePath()
@@ -119,7 +122,7 @@ export class signIn extends plugin {
         name: e.sender.nickname,
         success: signInCount + 1,
         continus: isContinuous ? (consecutiveSignInCount + 1) : 1,
-        num: 1,
+        num: await redis.get(dayKey) || 1,
         last_time: isUpdate ? parseDateTime(tempTime) : parseDateTime(getBeijingFormattedTime)
       })
 

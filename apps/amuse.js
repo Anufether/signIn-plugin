@@ -1,5 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import { segment } from 'icqq'
+import moment from 'moment'
 
 export class amuse extends plugin {
   constructor () {
@@ -7,7 +8,7 @@ export class amuse extends plugin {
       name: '更新日志',
       dsc: '小柴郡更新日志',
       event: 'message',
-      priority: 6,
+      priority: 6000,
       rule: [
         {
           reg: '^#?更新日志$',
@@ -24,9 +25,33 @@ export class amuse extends plugin {
         {
           reg: '^随机柴郡',
           fnc: 'cj'
+        },
+        {
+          reg: '^.*$',
+          fnc: 'count'
         }
       ]
     })
+  }
+
+  async count (e) {
+    let key = 'YZ:signIn:count:'
+    if (!e.isGroup) {
+      let dayKey = `${key}${e.user_id}:day:${moment().format('MMDD')}`
+      // 使用 async/await 来等待 Redis 操作完成
+      await redis.incr(dayKey)
+
+      // 设置 key 的过期时间，这里设置为 30 天（3600 秒 * 24 小时 * 2 天）
+      await redis.expire(dayKey, 3600 * 24 * 2)
+    } else {
+      key += `group:${e.group_id}:`
+      let dayKey = `${key}${e.user_id}:day:${moment().format('MMDD')}`
+      // 使用 async/await 来等待 Redis 操作完成
+      await redis.incr(dayKey)
+
+      // 设置 key 的过期时间，这里设置为 30 天（3600 秒 * 24 小时 * 2 天）
+      await redis.expire(dayKey, 3600 * 24 * 2)
+    }
   }
 
   async log (e) {
@@ -81,7 +106,7 @@ export class amuse extends plugin {
 
 // 随机加入喵喵语气词
 function getRandomChar () {
-  const chars = '→↑↓~↖↗'
+  const chars = '→↑↓~'
   const randomIndex = Math.floor(Math.random() * chars.length)
   return chars.charAt(randomIndex)
 }

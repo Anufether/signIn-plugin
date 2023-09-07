@@ -11,7 +11,7 @@ export class myInfo extends plugin {
       rule: [
         {
           reg: '^#?我的信息$',
-          fnc: '我的信息'
+          fnc: 'myInfo'
         }
       ]
     })

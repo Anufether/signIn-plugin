@@ -26,7 +26,7 @@ try {
     logs = fs.readFileSync(_logPath, 'utf8') || ''
     logs = logs.split('\n')
 
-    let temp = {};
+    let temp = {}
     let lastLine = {}
     lodash.forEach(logs, (line) => {
       if (versionCount <= -1) {

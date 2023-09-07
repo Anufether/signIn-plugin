@@ -29,6 +29,14 @@ export class amuse extends plugin {
         {
           reg: '^.*$',
           fnc: 'count'
+        },
+        {
+          reg: '^#?(kfc|v50|网易云热评|舔狗日记)$',
+          fnc: 'text'
+        },
+        {
+          reg: '^#?发癫(.*)',
+          fnc: 'fd'
         }
       ]
     })
@@ -88,7 +96,7 @@ export class amuse extends plugin {
   }
 
   // 随机柴郡图
-  async cj (e) {
+  async cj () {
     let urls = ['http://api.yujn.cn/api/chaijun.php?', 'http://chaijun.avocado.wiki']
     const randomIndex = Math.random()
     let url
@@ -101,6 +109,43 @@ export class amuse extends plugin {
     // 发送消息
     await this.reply(segment.image(url))
     return true // 返回true 阻挡消息不再往下
+  }
+
+  async text (e) {
+    let message = e.msg
+    let key
+    if (message.includes('v50') || message.includes('kfc')) {
+      key = 'kfc'
+    } else if (message.includes('舔狗日记')) {
+      key = 'tg'
+    } else if (message.includes('网易云热评')) {
+      key = 'wyy'
+    }
+    let url = `http://api.gakki.icu/${key}?type=json`
+    let res = await fetch(url) // 调用接口获取数据
+    let result = await res.json()
+    if (result.code == 200) {
+      await e.reply(result.data)
+    } else if (result.code == 429) {
+      e.reply('太快力q(≧▽≦q)受不了，请慢一点~')
+    } else {
+      e.reply('查询失败,可能接口失效力~，请联系憨憨捏~')
+    }
+  }
+
+  async fd (e) {
+    let encode
+    if (e.at) {
+      const at = e.group.pickMember(e.at)
+      encode = at.info?.card || at.info?.nickname
+    } else {
+      encode = e.msg.replace(/^#?发癫/, '').trim()
+    }
+    if (!encode) return e.reply('输入内容不能为空')
+    let url = `https://api.gakki.icu/fd?msg=${encode}`
+    let response = await fetch(url) // 调用接口获取数据
+    const text = await response.text()
+    await this.reply(text)
   }
 }
 

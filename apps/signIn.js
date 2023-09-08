@@ -11,17 +11,25 @@ export class signIn extends plugin {
       name: '签到',
       dsc: '签到',
       event: 'message',
-      priority: 5000,
+      priority: 100,
       rule: [
         {
           reg: '^#?签到$',
           fnc: 'signIn'
+        },
+        {
+          reg: '^原图',
+          fnc: 'getOriginalPicture'
         }
       ]
     })
 
     // 创建一个锁对象
     this.lock = false
+  }
+
+  get Bot () {
+    return this.e.bot ?? Bot
   }
 
   async signIn (e) {
@@ -109,6 +117,7 @@ export class signIn extends plugin {
       dayArr: isExist ? data[userId].dayArr : [extractDayFromDate(getCurrentDate())]
     }
 
+    // 获取昨日时间key
     let dayKey = `YZ:signIn:count:group:${e.group_id}:${e.user_id}:day:${moment().subtract(1, 'days').format('MMDD')}`
 
     try {
@@ -132,12 +141,16 @@ export class signIn extends plugin {
       stream.on('data', (chunk) => {
         chunks.push(chunk)
       })
+      // 原始信息变量
+      let msg = null
 
-      stream.on('end', () => {
+      stream.on('end', async () => {
         const imageBuffer = Buffer.concat(chunks)
         const base64Image = imageBuffer.toString('base64')
         const imageSegment = segment.image('base64://' + base64Image)
-        e.reply(imageSegment)
+        msg = await this.Bot.sendGroupMsg(e.group_id, imageSegment)
+        // console.log(msg.message_id)
+        await redis.set(`YZ:signIn:${msg.message_id}`, randomImagePath, { EX: 3600 * 3 })
       })
 
       // 写入签到数据
@@ -151,6 +164,40 @@ export class signIn extends plugin {
       console.error('签到失败:', error)
       e.reply('签到失败(ToT)/~~~，请联系管理员或重新签到')
     }
+  }
+
+  async getOriginalPicture (e) {
+    let source
+    if (e.reply_id) {
+      source = { message_id: e.reply_id }
+    } else {
+      if (!e.hasReply && !e.source) {
+        return false
+      }
+      // 引用的消息不是自己的消息
+      if (e.source.user_id !== e.self_id) {
+        return false
+      }
+      // 引用的消息不是纯图片
+      if (!/^\[图片]$/.test(e.source.message)) {
+        return false
+      }
+      // 获取原消息
+      if (e.group?.getChatHistory) {
+        source = (await e.group.getChatHistory(e.source.seq, 1)).pop()
+      } else if (e.friend?.getChatHistory) {
+        source = (await e.friend.getChatHistory(e.source.time, 1)).pop()
+      }
+    }
+    if (source) {
+      let imgPath = await redis.get(`YZ:signIn:${source.message_id}`)
+      if (imgPath) {
+        e.reply(segment.image(`file://${imgPath}`), false, { recallMsg: 10 })
+      }
+      return true
+    }
+    e.reply('消息太过久远了，小柴郡也忘了原图是啥了，下次早点来吧~')
+    return false
   }
 }
 
@@ -178,6 +225,7 @@ function extractDayFromDate (dateString) {
   const date = new Date(dateString)
   return date.getDate().toString().padStart(2, '0')
 }
+
 // 获取当前日期
 function getCurrentDate () {
   const today = new Date()
@@ -187,6 +235,7 @@ function getCurrentDate () {
 
   return `${year}-${month}-${day}`
 }
+
 function convertTimeToDateString (timeString) {
   const date = new Date(timeString)
   const year = date.getFullYear()

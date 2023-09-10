@@ -1,9 +1,10 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs'
 import path from 'path'
-import { segment } from 'icqq'
+import { axios, segment } from 'icqq'
 import generateImage from './imgGeneration.cjs'
 import moment from 'moment'
+import _ from 'lodash'
 
 export class signIn extends plugin {
   constructor () {
@@ -20,6 +21,10 @@ export class signIn extends plugin {
         {
           reg: '^原图',
           fnc: 'getOriginalPicture'
+        },
+        {
+          reg: '^签到定制',
+          fnc: 'signInCustom'
         }
       ]
     })
@@ -30,6 +35,59 @@ export class signIn extends plugin {
 
   get Bot () {
     return this.e.bot ?? Bot
+  }
+
+  async signInCustom (e) {
+    if (!await this.handelImg(e)) return
+    // 需要定制图片的URL
+    const imageUrl = e.img[0]
+
+    // 保存到本地
+    const localFilePath = `plugins/signIn-plugin/data/customBackground/${e.user_id}.jpg`
+
+    // 使用axios下载图片
+    axios.get(imageUrl, { responseType: 'stream' })
+      .then(response => {
+        const fileStream = fs.createWriteStream(localFilePath)
+
+        response.data.pipe(fileStream)
+
+        fileStream.on('finish', () => {
+          fileStream.close()
+          console.log('图片已成功保存到本地:', localFilePath)
+          e.reply('定制成功！( •̀ ω •́ )✧')
+        })
+      })
+      .catch(error => {
+        console.error('下载图片时出错:', error)
+        e.reply('❎ 定制失败，请联系管理员')
+      })
+  }
+
+  async handelImg (e) {
+    if (e.source) {
+      let source
+      if (e.isGroup) {
+        source = (await e.group.getChatHistory(e.source.seq, 1)).pop()
+      } else {
+        source = (await e.friend.getChatHistory(e.source.time, 1)).pop()
+      }
+      e.img = [source.message.find(item => item.type === 'image')?.url]
+    }
+    if (!_.isEmpty(e.img)) return true
+    this.setContext('MonitorImg')
+    e.reply('⚠ 请发送图片')
+    return false
+  }
+
+  async MonitorImg () {
+    if (!this.e.img) {
+      this.e.reply('❎ 未检测到图片操作已取消')
+    } else {
+      // this.reply(this.e.img[0])
+      await this.signInCustom(this.e)
+    }
+    this.finish('MonitorImg')
   }
 
   async signIn (e) {
@@ -87,7 +145,7 @@ export class signIn extends plugin {
       }
       isExist = true
       data[userId].dayArr.push(extractDayFromDate(getCurrentDate()))
-      console.log('Updated dayArr:', data[userId].dayArr)
+      // console.log('Updated dayArr:', data[userId].dayArr)
     }
 
     // 创建时间是否存在
@@ -123,8 +181,9 @@ export class signIn extends plugin {
     try {
       // 构建、输出签到图片
       const randomImagePath = await getRandomImageFilePath()
+      const customImagePath = await getCustomImageFilePath(e.user_id)
       const canvas = await generateImage({
-        url: randomImagePath,
+        url: customImagePath || randomImagePath,
         day_arr: data[userId].dayArr,
         zan: isContinuous ? 1 : 2,
         qq: e.user_id,
@@ -201,7 +260,22 @@ export class signIn extends plugin {
   }
 }
 
-// 随机读取函数图片
+// 读取定制图片
+async function getCustomImageFilePath (id) {
+  const filePath = `plugins/signIn-plugin/data/customBackground/${id}.jpg`
+  try {
+    if (fs.existsSync(filePath)) {
+      return filePath
+    } else {
+      return null
+    }
+  } catch (err) {
+    console.error(`发生错误: ${err}`)
+    return null
+  }
+}
+
+// 随机读取图片
 async function getRandomImageFilePath () {
   try {
     const files = fs.readdirSync('plugins/signIn-plugin/resource/imageBackground')

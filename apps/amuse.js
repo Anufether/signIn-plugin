@@ -52,6 +52,7 @@ export class amuse extends plugin {
       // 设置 key 的过期时间，这里设置为 30 天（3600 秒 * 24 小时 * 2 天）
       await redis.expire(dayKey, 3600 * 24 * 2)
     } else {
+      // e.reply(e.img[0])
       key += `group:${e.group_id}:`
       let dayKey = `${key}${e.user_id}:day:${moment().format('MMDD')}`
       // 使用 async/await 来等待 Redis 操作完成

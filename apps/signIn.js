@@ -209,7 +209,7 @@ export class signIn extends plugin {
         const imageSegment = segment.image('base64://' + base64Image)
         msg = await this.Bot.sendGroupMsg(e.group_id, imageSegment)
         // console.log(msg.message_id)
-        await redis.set(`YZ:signIn:${msg.message_id}`, randomImagePath, { EX: 3600 * 3 })
+        await redis.set(`YZ:signIn:${msg.message_id}`, customImagePath || randomImagePath, { EX: 3600 * 3 })
       })
 
       // 写入签到数据

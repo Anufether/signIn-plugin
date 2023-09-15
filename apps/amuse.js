@@ -27,40 +27,19 @@ export class amuse extends plugin {
           fnc: 'cj'
         },
         {
-          reg: '^.*$',
-          fnc: 'count'
-        },
-        {
           reg: '^#?(kfc|v50|网易云热评|舔狗日记)$',
           fnc: 'text'
         },
         {
           reg: '^#?发癫(.*)',
           fnc: 'fd'
+        },
+        {
+          reg: '^.*$',
+          fnc: 'count'
         }
       ]
     })
-  }
-
-  async count (e) {
-    let key = 'YZ:signIn:count:'
-    if (!e.isGroup) {
-      let dayKey = `${key}${e.user_id}:day:${moment().format('MMDD')}`
-      // 使用 async/await 来等待 Redis 操作完成
-      await redis.incr(dayKey)
-
-      // 设置 key 的过期时间，这里设置为 30 天（3600 秒 * 24 小时 * 2 天）
-      await redis.expire(dayKey, 3600 * 24 * 2)
-    } else {
-      // e.reply(e.img[0])
-      key += `group:${e.group_id}:`
-      let dayKey = `${key}${e.user_id}:day:${moment().format('MMDD')}`
-      // 使用 async/await 来等待 Redis 操作完成
-      await redis.incr(dayKey)
-
-      // 设置 key 的过期时间，这里设置为 30 天（3600 秒 * 24 小时 * 2 天）
-      await redis.expire(dayKey, 3600 * 24 * 2)
-    }
   }
 
   async log (e) {
@@ -125,9 +104,9 @@ export class amuse extends plugin {
     let url = `http://api.gakki.icu/${key}?type=json`
     let res = await fetch(url) // 调用接口获取数据
     let result = await res.json()
-    if (result.code == 200) {
+    if (result.code === 200) {
       await e.reply(result.data)
-    } else if (result.code == 429) {
+    } else if (result.code === 429) {
       e.reply('太快力q(≧▽≦q)受不了，请慢一点~')
     } else {
       e.reply('查询失败,可能接口失效力~，请联系憨憨捏~')
@@ -147,6 +126,27 @@ export class amuse extends plugin {
     let response = await fetch(url) // 调用接口获取数据
     const text = await response.text()
     await this.reply(text)
+  }
+
+  async count (e) {
+    let key = 'YZ:signIn:count:'
+    if (!e.isGroup) {
+      let dayKey = `${key}${e.user_id}:day:${moment().format('MMDD')}`
+      // 使用 async/await 来等待 Redis 操作完成
+      await redis.incr(dayKey)
+
+      // 设置 key 的过期时间，这里设置为 30 天（3600 秒 * 24 小时 * 2 天）
+      await redis.expire(dayKey, 3600 * 24 * 2)
+    } else {
+      // e.reply(e.img[0])
+      key += `group:${e.group_id}:`
+      let dayKey = `${key}${e.user_id}:day:${moment().format('MMDD')}`
+      // 使用 async/await 来等待 Redis 操作完成
+      await redis.incr(dayKey)
+
+      // 设置 key 的过期时间，这里设置为 30 天（3600 秒 * 24 小时 * 2 天）
+      await redis.expire(dayKey, 3600 * 24 * 2)
+    }
   }
 }
 

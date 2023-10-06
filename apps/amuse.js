@@ -48,7 +48,7 @@ export class amuse extends plugin {
 
   async call (e) {
     if (e.user_id === 450993013) {
-      e.reply('喵呜~主人，我在这里哦( •̀ ω •́ )✧')
+      e.reply('喵呜~主人，我在这里哦( •̀ ω •́ )✧\n')
     }
   }
 

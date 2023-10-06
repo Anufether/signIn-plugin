@@ -15,7 +15,7 @@ export class signIn extends plugin {
       priority: 100,
       rule: [
         {
-          reg: '^#?签到$',
+          reg: '^(#?签到|qd)$',
           fnc: 'signIn'
         },
         {
@@ -23,7 +23,7 @@ export class signIn extends plugin {
           fnc: 'getOriginalPicture'
         },
         {
-          reg: '^签到定制',
+          reg: '^(签到)?定制$',
           fnc: 'signInCustom'
         }
       ]

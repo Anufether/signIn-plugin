@@ -15,11 +15,11 @@ export class signIn extends plugin {
       priority: 100,
       rule: [
         {
-          reg: '^(#?签到|qd)$',
+          reg: '^(#?签到|qd)?$',
           fnc: 'signIn'
         },
         {
-          reg: '^原图',
+          reg: '^#?(获取|给我|我要|求|发|发下|发个|发一下)?原图(吧|呗)?$',
           fnc: 'getOriginalPicture'
         },
         {
